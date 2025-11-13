@@ -1,0 +1,42 @@
+enable
+configure terminal
+
+! Create VLANs
+vlan 10
+ name USERS
+vlan 20
+ name GUEST
+vlan 30
+ name NETWORK-MGMT
+vlan 40
+ name MANAGER
+vlan 50
+ name DMZ
+
+! Configure trunk to FortiGate
+interface gigabitethernet1/0/1
+ description TRUNK-to-FORTIGATE
+ switchport mode trunk
+ switchport trunk allowed vlan 10,20,30,40,50
+ spanning-tree portfast trunk
+
+! Configure access ports
+interface range gigabitethernet1/0/2-10
+ switchport mode access
+ switchport access vlan 10
+ spanning-tree portfast
+
+interface range gigabitethernet1/0/11-15
+ switchport mode access
+ switchport access vlan 20
+ spanning-tree portfast
+
+! DMZ connection
+interface gigabitethernet1/0/24
+ description TO-DMZ-SWITCH
+ switchport mode trunk
+ switchport trunk allowed vlan 50
+ spanning-tree portfast trunk
+
+end
+write memory
